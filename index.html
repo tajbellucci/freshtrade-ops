@@ -1,0 +1,1677 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FreshTrade Ops | Import Operations Intelligence</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    * {
+      font-family: 'DM Sans', sans-serif;
+    }
+    
+    .font-heading {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    .nav-link {
+      position: relative;
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #059669;
+      transition: width 0.3s ease;
+    }
+    
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(5, 150, 105, 0.35);
+    }
+    
+    .btn-secondary {
+      transition: all 0.3s ease;
+    }
+    
+    .btn-secondary:hover {
+      background: #f0fdf4;
+      transform: translateY(-1px);
+    }
+    
+    .timeline-line {
+      background: linear-gradient(90deg, #059669 0%, #10b981 100%);
+    }
+    
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    
+    .accordion-content.open {
+      max-height: 500px;
+    }
+    
+    .icon-container {
+      transition: all 0.3s ease;
+    }
+    
+    .card-hover:hover .icon-container {
+      transform: scale(1.1);
+      background: #059669;
+      color: white;
+    }
+    
+    .card-hover:hover .icon-container svg {
+      color: white;
+    }
+    
+    .pulse-dot {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.6s ease forwards;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .toast {
+      animation: slideIn 0.3s ease;
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    .success-message {
+      animation: fadeIn 0.5s ease forwards;
+    }
+    
+    .checkbox-custom {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #d1d5db;
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+    
+    .checkbox-custom:checked {
+      background: #059669;
+      border-color: #059669;
+    }
+    
+    .checkbox-custom:checked::after {
+      content: '';
+      position: absolute;
+      left: 5px;
+      top: 2px;
+      width: 6px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="h-full bg-white text-gray-900">
+  <div id="app-wrapper" class="w-full h-full overflow-auto"><!-- Main Home Page -->
+   <div id="home-page"><!-- Toast Notification -->
+    <div id="toast" class="fixed top-24 right-4 z-50 hidden">
+     <div class="bg-emerald-600 text-white px-6 py-4 rounded-lg shadow-xl toast flex items-center gap-3">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+      </svg><span id="toast-message">Application submitted successfully!</span>
+     </div>
+    </div><!-- Saved Applications Modal -->
+    <div id="saved-apps-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+     <div class="bg-white rounded-2xl max-w-3xl w-full max-h-[80%] overflow-hidden flex flex-col">
+      <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+       <h3 class="font-heading text-xl font-bold text-gray-900">Saved Applications</h3><button onclick="closeSavedAppsModal()" class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center">
+        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg></button>
+      </div>
+      <div id="saved-apps-list" class="flex-1 overflow-y-auto p-6"><!-- Applications will be rendered here -->
+      </div>
+     </div>
+    </div><!-- Sticky Navigation -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-b border-gray-100 z-40 transition-all duration-300">
+     <div class="max-w-6xl mx-auto px-6 py-4">
+      <div class="flex items-center justify-between">
+       <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center">
+         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+         </svg>
+        </div><span class="font-heading font-bold text-xl text-gray-900">FreshTrade Ops</span>
+       </div>
+       <div class="hidden md:flex items-center gap-8"><a href="#solution" class="nav-link text-sm text-gray-600 hover:text-gray-900">How It Works</a> <a href="#benefits" class="nav-link text-sm text-gray-600 hover:text-gray-900">Benefits</a> <a href="javascript:void(0)" onclick="showToolsPage()" class="nav-link text-sm text-gray-600 hover:text-gray-900">Tools</a> <a href="#pricing" class="nav-link text-sm text-gray-600 hover:text-gray-900">Pricing</a>
+       </div><a href="#apply" class="btn-primary px-5 py-2.5 rounded-lg text-white text-sm font-semibold"> Apply Now </a>
+      </div>
+     </div>
+    </nav><!-- Hero Section -->
+    <section class="pt-28 pb-20 px-6">
+     <div class="max-w-6xl mx-auto">
+      <div class="max-w-3xl mx-auto text-center">
+       <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 rounded-full mb-8"><span class="w-2 h-2 bg-emerald-500 rounded-full pulse-dot"></span> <span class="text-sm text-emerald-700 font-medium">Now accepting pilot applications</span>
+       </div>
+       <h1 id="hero-headline" class="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">Stop import delays and document chaos.</h1>
+       <p id="hero-subheadline" class="text-lg md:text-xl text-gray-600 leading-relaxed mb-10 max-w-2xl mx-auto">FreshTrade Ops helps Qatar food importers track fresh &amp; frozen shipments from Pakistan, reduce risk, and keep every document ready—without changing your importer license.</p>
+       <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12"><a href="#apply" id="primary-cta" class="btn-primary w-full sm:w-auto px-8 py-4 rounded-xl text-white font-semibold text-lg"> Apply for Free Pilot </a> <a href="#solution" class="btn-secondary w-full sm:w-auto px-8 py-4 rounded-xl border-2 border-gray-200 text-gray-700 font-semibold text-lg"> See How It Works </a>
+       </div><!-- Trust Bullets -->
+       <div class="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10">
+        <div class="flex items-center gap-3">
+         <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">
+          <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+         </div><span class="text-gray-700 font-medium">Weekly Ops Health Reports</span>
+        </div>
+        <div class="flex items-center gap-3">
+         <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
+          <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+         </div><span class="text-gray-700 font-medium">Document Readiness (R/A/G)</span>
+        </div>
+        <div class="flex items-center gap-3">
+         <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+          <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+          </svg>
+         </div><span class="text-gray-700 font-medium">Spoilage &amp; Delay Risk Alerts</span>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section><!-- Free Pilot Banner -->
+    <section id="pilot" class="py-6 px-6">
+     <div class="max-w-4xl mx-auto">
+      <div class="relative overflow-hidden bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-2xl p-8 md:p-12">
+       <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+       <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+       <div class="relative z-10">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+         <div class="flex-1">
+          <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/20 rounded-full mb-4"><span class="text-xs text-white font-semibold uppercase tracking-wide">Limited Offer</span>
+          </div>
+          <h2 id="pilot-title" class="font-heading text-2xl md:text-3xl font-bold text-white mb-4">Free Pilot — Import With Confidence</h2>
+          <p class="text-white/95 mb-4 text-lg">Run 1 real shipment through our Confidence Engine.</p>
+          <p class="text-white/90 mb-3 font-semibold">We show you:</p>
+          <ul class="space-y-2 mb-4">
+           <li class="flex items-start gap-3 text-white/90">
+            <svg class="w-5 h-5 text-emerald-300 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg><span>True landed cost</span></li>
+           <li class="flex items-start gap-3 text-white/90">
+            <svg class="w-5 h-5 text-emerald-300 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg><span>Spoilage &amp; clearance risk</span></li>
+           <li class="flex items-start gap-3 text-white/90">
+            <svg class="w-5 h-5 text-emerald-300 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg><span>Document readiness gaps</span></li>
+           <li class="flex items-start gap-3 text-white/90">
+            <svg class="w-5 h-5 text-emerald-300 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg><span>What to do next (before problems happen)</span></li>
+          </ul>
+          <p class="text-white/90 mb-3 font-semibold">No license change. No integrations. No commitment.</p>
+          <p class="text-white/70 text-sm italic border-t border-white/20 pt-3 mt-3">This pilot exists because tools today calculate numbers — not outcomes.</p>
+         </div>
+         <div class="flex-shrink-0"><a href="#apply" class="inline-flex items-center gap-2 bg-white px-8 py-4 rounded-xl text-emerald-700 font-bold text-lg hover:bg-emerald-50 transition-colors"> Apply Now 
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+           </svg></a>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section><!-- How It Works Section -->
+    <section id="solution" class="py-20 px-6 bg-white">
+     <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+       <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-100 rounded-full mb-4">
+        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+        </svg><span class="text-sm text-emerald-700 font-semibold">HOW IT WORKS</span>
+       </div>
+       <h2 class="font-heading text-3xl md:text-4xl font-bold text-gray-900 mb-4">4 Simple Steps to Confident Imports</h2>
+       <p class="text-gray-600 text-lg max-w-2xl mx-auto">From planning to arrival — everything you need in one place</p>
+      </div>
+      <div class="grid md:grid-cols-2 gap-8"><!-- Step 1 -->
+       <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl p-8 border-2 border-emerald-200 card-hover">
+        <div class="w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center text-white font-heading font-bold text-3xl shadow-lg mb-6">
+         1
+        </div>
+        <h3 class="font-heading text-2xl font-bold text-gray-900 mb-3">Enter Shipment Details</h3>
+        <p class="text-gray-700 mb-4">Input product type, quantity, origin, shipping method, and transit dates</p>
+        <div class="bg-white rounded-xl p-4 border border-emerald-200">
+         <p class="text-sm text-gray-700"><span class="font-semibold">Example:</span> 5000 kg frozen halal chicken, Karachi → Doha, 12-day ocean transit</p>
+        </div>
+       </div><!-- Step 2 -->
+       <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-8 border-2 border-blue-200 card-hover">
+        <div class="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center text-white font-heading font-bold text-3xl shadow-lg mb-6">
+         2
+        </div>
+        <h3 class="font-heading text-2xl font-bold text-gray-900 mb-3">Get Instant Risk Assessment</h3>
+        <p class="text-gray-700 mb-4">Our engine analyzes spoilage risk, document gaps, and costs in real-time</p>
+        <div class="grid grid-cols-3 gap-3">
+         <div class="bg-white rounded-lg p-3 border border-blue-200 text-center">
+          <div class="text-2xl font-bold text-green-600">
+           78
+          </div>
+          <p class="text-xs text-gray-600">Confidence</p>
+         </div>
+         <div class="bg-white rounded-lg p-3 border border-blue-200 text-center">
+          <div class="text-2xl font-bold text-red-600">
+           3
+          </div>
+          <p class="text-xs text-gray-600">Risks</p>
+         </div>
+         <div class="bg-white rounded-lg p-3 border border-blue-200 text-center">
+          <div class="text-2xl font-bold text-blue-600">
+           85%
+          </div>
+          <p class="text-xs text-gray-600">Docs Ready</p>
+         </div>
+        </div>
+       </div><!-- Step 3 -->
+       <div class="bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl p-8 border-2 border-amber-200 card-hover">
+        <div class="w-16 h-16 bg-amber-600 rounded-2xl flex items-center justify-center text-white font-heading font-bold text-3xl shadow-lg mb-6">
+         3
+        </div>
+        <h3 class="font-heading text-2xl font-bold text-gray-900 mb-3">Take Action Before Problems Hit</h3>
+        <p class="text-gray-700 mb-4">Get prioritized tasks with deadlines — no guesswork, just clear next steps</p>
+        <div class="space-y-2">
+         <div class="flex items-center gap-2 p-3 bg-white rounded-lg border border-amber-200"><span class="w-6 h-6 rounded-full bg-red-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">1</span> <span class="text-sm font-semibold text-gray-900">Request Health Certificate</span>
+         </div>
+         <div class="flex items-center gap-2 p-3 bg-white rounded-lg border border-amber-200"><span class="w-6 h-6 rounded-full bg-amber-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">2</span> <span class="text-sm font-semibold text-gray-900">Book Temperature Logger</span>
+         </div>
+        </div>
+       </div><!-- Step 4 -->
+       <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-8 border-2 border-purple-200 card-hover">
+        <div class="w-16 h-16 bg-purple-600 rounded-2xl flex items-center justify-center text-white font-heading font-bold text-3xl shadow-lg mb-6">
+         4
+        </div>
+        <h3 class="font-heading text-2xl font-bold text-gray-900 mb-3">Monitor &amp; Get Weekly Reports</h3>
+        <p class="text-gray-700 mb-4">Track shipment status and receive automated health reports every week</p>
+        <div class="bg-white rounded-xl p-4 border border-purple-200">
+         <div class="flex items-center gap-3 mb-2">
+          <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg><span class="text-sm font-semibold text-gray-900">Weekly Ops Health Report</span>
+         </div>
+         <p class="text-xs text-gray-600 italic">"Confidence scores, risk alerts, and action checklists in one view"</p>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section><!-- Benefits Section -->
+    <section id="benefits" class="py-20 px-6 bg-white">
+     <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+       <div class="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-full mb-4">
+        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+        </svg><span class="text-sm text-blue-700 font-semibold">WHY CHOOSE US</span>
+       </div>
+       <h2 class="font-heading text-3xl md:text-4xl font-bold text-gray-900 mb-4">Built for Qatar Food Importers</h2>
+       <p class="text-gray-600 text-lg max-w-2xl mx-auto">Purpose-built for Pakistan → Qatar trade routes</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-8">
+       <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl p-8 border-2 border-emerald-200">
+        <div class="w-14 h-14 bg-emerald-600 rounded-xl flex items-center justify-center mb-6">
+         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+         </svg>
+        </div>
+        <h3 class="font-heading text-xl font-bold text-gray-900 mb-3">No License Change Required</h3>
+        <p class="text-gray-700">Work under your existing importer license. No legal changes, no new registrations.</p>
+       </div>
+       <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-8 border-2 border-blue-200">
+        <div class="w-14 h-14 bg-blue-600 rounded-xl flex items-center justify-center mb-6">
+         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+         </svg>
+        </div>
+        <h3 class="font-heading text-xl font-bold text-gray-900 mb-3">Real-Time Risk Alerts</h3>
+        <p class="text-gray-700">Get notified before problems happen — spoilage risks, document gaps, and delays.</p>
+       </div>
+       <div class="bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl p-8 border-2 border-amber-200">
+        <div class="w-14 h-14 bg-amber-600 rounded-xl flex items-center justify-center mb-6">
+         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+         </svg>
+        </div>
+        <h3 class="font-heading text-xl font-bold text-gray-900 mb-3">Weekly Health Reports</h3>
+        <p class="text-gray-700">Get automated operations snapshots every week — confidence scores and action lists.</p>
+       </div>
+       <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-8 border-2 border-purple-200">
+        <div class="w-14 h-14 bg-purple-600 rounded-xl flex items-center justify-center mb-6">
+         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+         </svg>
+        </div>
+        <h3 class="font-heading text-xl font-bold text-gray-900 mb-3">Document Readiness (R/A/G)</h3>
+        <p class="text-gray-700">Red, Amber, Green status for every required document — no surprises at customs.</p>
+       </div>
+       <div class="bg-gradient-to-br from-red-50 to-red-100 rounded-2xl p-8 border-2 border-red-200">
+        <div class="w-14 h-14 bg-red-600 rounded-xl flex items-center justify-center mb-6">
+         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+         </svg>
+        </div>
+        <h3 class="font-heading text-xl font-bold text-gray-900 mb-3">Landed Cost Transparency</h3>
+        <p class="text-gray-700">See true costs upfront — duties, freight, insurance, and hidden fees included.</p>
+       </div>
+       <div class="bg-gradient-to-br from-teal-50 to-teal-100 rounded-2xl p-8 border-2 border-teal-200">
+        <div class="w-14 h-14 bg-teal-600 rounded-xl flex items-center justify-center mb-6">
+         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+         </svg>
+        </div>
+        <h3 class="font-heading text-xl font-bold text-gray-900 mb-3">No Integrations Needed</h3>
+        <p class="text-gray-700">Simple data entry. No APIs, no software installs, no IT team required.</p>
+       </div>
+      </div>
+     </div>
+    </section><!-- Testimonials Section -->
+    <section id="testimonials" class="py-20 px-6 bg-gradient-to-br from-emerald-50 to-emerald-100">
+     <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+       <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-200 rounded-full mb-4">
+        <svg class="w-5 h-5 text-emerald-700" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+        </svg><span class="text-sm text-emerald-800 font-semibold">WHAT IMPORTERS SAY</span>
+       </div>
+       <h2 class="font-heading text-3xl md:text-4xl font-bold text-gray-900 mb-4">Trusted by Food Importers</h2>
+       <p class="text-gray-700 text-lg">Real feedback from pilot participants</p>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+       <div class="bg-white rounded-2xl p-8 border-2 border-emerald-200 card-hover">
+        <div class="flex items-center gap-4 mb-4">
+         <div class="w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold text-lg">
+          AK
+         </div>
+         <div>
+          <h4 class="font-bold text-gray-900">Ahmed K.</h4>
+          <p class="text-sm text-gray-600">Frozen Meat Importer</p>
+         </div>
+        </div>
+        <p class="text-gray-700 italic">"The spoilage risk alerts saved us from a bad shipment. We caught a temperature control issue before loading."</p>
+        <div class="flex gap-1 mt-4">
+         <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewbox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+         </svg>
+         <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewbox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+         </svg>
+         <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewbox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+         </svg>
+         <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewbox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+         </svg>
+         <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewbox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+         </svg>
+        </div>
+       </div>
+       <div class="bg-white rounded-2xl p-8 border-2 border-emerald-200 card-hover">
+        <div class="flex items-center gap-4 mb-4">
+         <div class="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-lg">
+          FH
+         </div>
+         <div>
+          <h4 class="font-bold text-gray-900">Fatima H.</h4>
+          <p class="text-sm text-gray-600">Dairy Products Importer</p>
+         </div>
+        </div>
+        <p class="text-gray-700 italic">"Document readiness saved hours at customs. We knew exactly what was missing before the shipment arrived."</p>
+        <div class="flex gap-1 mt-4">
+         <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewbox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+         </svg>
+         <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewbox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+         </svg>
+         <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewbox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+         </svg>
+         <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewbox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+         </svg>
+         <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewbox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+         </svg>
+        </div>
+       </div>
+       <div class="bg-white rounded-2xl p-8 border-2 border-emerald-200 card-hover">
+        <div class="flex items-center gap-4 mb-4">
+         <div class="w-12 h-12 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold text-lg">
+          MR
+         </div>
+         <div>
+          <h4 class="font-bold text-gray-900">Mohammed R.</h4>
+          <p class="text-sm text-gray-600">Fresh Produce Importer</p>
+         </div>
+        </div>
+        <p class="text-gray-700 italic">"Weekly reports keep my team aligned. Everyone knows what's urgent and what can wait. Game changer."</p>
+        <div class="flex gap-1 mt-4">
+         <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewbox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+         </svg>
+         <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewbox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+         </svg>
+         <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewbox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+         </svg>
+         <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewbox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+         </svg>
+         <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewbox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+         </svg>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section><!-- Advanced Features Section -->
+    <section id="advanced-features" class="py-20 px-6 bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900">
+     <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+       <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 rounded-full mb-4">
+        <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+        </svg><span class="text-sm text-emerald-400 font-semibold uppercase tracking-wide">Coming Soon</span>
+       </div>
+       <h2 class="font-heading text-3xl md:text-4xl font-bold text-white mb-4">Advanced Features in Development</h2>
+       <p class="text-slate-300 text-lg max-w-2xl mx-auto">Next-generation capabilities to transform your import operations</p>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"><!-- Real-Time IoT Integration -->
+       <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:bg-white/15 transition-all card-hover">
+        <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-6 shadow-lg">
+         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+         </svg>
+        </div>
+        <h3 class="font-heading text-xl font-bold text-white mb-3">Live IoT Monitoring</h3>
+        <p class="text-slate-300 text-sm mb-4">Connect temperature loggers, GPS trackers, and humidity sensors directly to the platform. Get instant alerts when thresholds are breached.</p>
+        <div class="flex items-center gap-2 text-blue-400 text-sm font-semibold"><span class="w-2 h-2 bg-blue-400 rounded-full pulse-dot"></span> <span>Q3 2025</span>
+        </div>
+       </div><!-- Blockchain Documentation -->
+       <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:bg-white/15 transition-all card-hover">
+        <div class="w-14 h-14 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center mb-6 shadow-lg">
+         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+         </svg>
+        </div>
+        <h3 class="font-heading text-xl font-bold text-white mb-3">Blockchain Verification</h3>
+        <p class="text-slate-300 text-sm mb-4">Immutable document verification using blockchain. Prove certificate authenticity instantly and eliminate fraud at customs checkpoints.</p>
+        <div class="flex items-center gap-2 text-amber-400 text-sm font-semibold"><span class="w-2 h-2 bg-amber-400 rounded-full pulse-dot"></span> <span>Q4 2025</span>
+        </div>
+       </div><!-- Smart Contract Automation -->
+       <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:bg-white/15 transition-all card-hover">
+        <div class="w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center mb-6 shadow-lg">
+         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+         </svg>
+        </div>
+        <h3 class="font-heading text-xl font-bold text-white mb-3">Auto-Payment Triggers</h3>
+        <p class="text-slate-300 text-sm mb-4">Smart contracts release supplier payments automatically when shipment milestones are verified (e.g., customs cleared, goods inspected).</p>
+        <div class="flex items-center gap-2 text-emerald-400 text-sm font-semibold"><span class="w-2 h-2 bg-emerald-400 rounded-full pulse-dot"></span> <span>Q1 2026</span>
+        </div>
+       </div><!-- Multi-Port Network -->
+       <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:bg-white/15 transition-all card-hover">
+        <div class="w-14 h-14 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center mb-6 shadow-lg">
+         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+         </svg>
+        </div>
+        <h3 class="font-heading text-xl font-bold text-white mb-3">Multi-Origin Expansion</h3>
+        <p class="text-slate-300 text-sm mb-4">Support for imports from India, Bangladesh, UAE, and Turkey. One platform for all your GCC-bound shipments with region-specific compliance rules.</p>
+        <div class="flex items-center gap-2 text-red-400 text-sm font-semibold"><span class="w-2 h-2 bg-red-400 rounded-full pulse-dot"></span> <span>Q2 2026</span>
+        </div>
+       </div><!-- Supplier Network -->
+       <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:bg-white/15 transition-all card-hover">
+        <div class="w-14 h-14 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl flex items-center justify-center mb-6 shadow-lg">
+         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+         </svg>
+        </div>
+        <h3 class="font-heading text-xl font-bold text-white mb-3">Verified Supplier Network</h3>
+        <p class="text-slate-300 text-sm mb-4">Access vetted Pakistan suppliers with performance ratings, average lead times, and compliance track records. Filter by product category and certifications.</p>
+        <div class="flex items-center gap-2 text-teal-400 text-sm font-semibold"><span class="w-2 h-2 bg-teal-400 rounded-full pulse-dot"></span> <span>Q3 2026</span>
+        </div>
+       </div><!-- Dynamic Pricing Engine -->
+       <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:bg-white/15 transition-all card-hover">
+        <div class="w-14 h-14 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center mb-6 shadow-lg">
+         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+         </svg>
+        </div>
+        <h3 class="font-heading text-xl font-bold text-white mb-3">Dynamic Market Pricing</h3>
+        <p class="text-slate-300 text-sm mb-4">Real-time freight rate optimization using live market data. Get alerted when shipping costs drop below your threshold for opportunistic bookings.</p>
+        <div class="flex items-center gap-2 text-indigo-400 text-sm font-semibold"><span class="w-2 h-2 bg-indigo-400 rounded-full pulse-dot"></span> <span>Q4 2026</span>
+        </div>
+       </div><!-- Insurance Automation -->
+       <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:bg-white/15 transition-all card-hover">
+        <div class="w-14 h-14 bg-gradient-to-br from-pink-500 to-pink-600 rounded-xl flex items-center justify-center mb-6 shadow-lg">
+         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+         </svg>
+        </div>
+        <h3 class="font-heading text-xl font-bold text-white mb-3">Instant Cargo Insurance</h3>
+        <p class="text-slate-300 text-sm mb-4">Parametric insurance that pays out automatically when IoT sensors detect breach conditions (e.g., temp exceeded 2°C for 4+ hours).</p>
+        <div class="flex items-center gap-2 text-pink-400 text-sm font-semibold"><span class="w-2 h-2 bg-pink-400 rounded-full pulse-dot"></span> <span>Q1 2027</span>
+        </div>
+       </div><!-- Carbon Footprint Tracking -->
+       <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:bg-white/15 transition-all card-hover">
+        <div class="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mb-6 shadow-lg">
+         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+         </svg>
+        </div>
+        <h3 class="font-heading text-xl font-bold text-white mb-3">ESG Compliance Tools</h3>
+        <p class="text-slate-300 text-sm mb-4">Track CO₂ emissions per shipment. Generate sustainability reports for stakeholders. Compare green shipping alternatives (air vs. sea vs. hybrid).</p>
+        <div class="flex items-center gap-2 text-green-400 text-sm font-semibold"><span class="w-2 h-2 bg-green-400 rounded-full pulse-dot"></span> <span>Q2 2027</span>
+        </div>
+       </div><!-- Fill Remaining Spot -->
+       <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:bg-white/15 transition-all card-hover">
+        <div class="w-14 h-14 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center mb-6 shadow-lg">
+         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+         </svg>
+        </div>
+        <h3 class="font-heading text-xl font-bold text-white mb-3">API Integrations</h3>
+        <p class="text-slate-300 text-sm mb-4">Connect with your ERP, WMS, and accounting software. Automatic data sync eliminates manual entry and reduces errors by 95%.</p>
+        <div class="flex items-center gap-2 text-cyan-400 text-sm font-semibold"><span class="w-2 h-2 bg-cyan-400 rounded-full pulse-dot"></span> <span>Q3 2027</span>
+        </div>
+       </div>
+      </div><!-- CTA -->
+      <div class="mt-16 text-center">
+       <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 max-w-3xl mx-auto">
+        <h3 class="font-heading text-2xl font-bold text-white mb-4">Want Early Access?</h3>
+        <p class="text-slate-300 mb-6">Join our pilot program and get priority access to these advanced features as they launch. Plus, help shape the roadmap with direct feedback.</p><a href="#apply" class="inline-flex items-center gap-2 btn-primary px-8 py-4 rounded-xl text-white font-bold text-lg"> Join Pilot Program 
+         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+         </svg></a>
+       </div>
+      </div>
+     </div>
+    </section><!-- Pricing Section -->
+    <section id="pricing" class="py-20 px-6 bg-white">
+     <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-16">
+       <div class="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 rounded-full mb-4">
+        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg><span class="text-sm text-purple-700 font-semibold">PRICING</span>
+       </div>
+       <h2 class="font-heading text-3xl md:text-4xl font-bold text-gray-900 mb-4">Simple, Transparent Pricing</h2>
+       <p class="text-gray-600 text-lg">Pay per shipment. Scale as you grow.</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-8"><!-- Starter Plan -->
+       <div class="bg-white rounded-2xl p-8 border-2 border-gray-200 card-hover">
+        <h3 class="font-heading text-2xl font-bold text-gray-900 mb-2">Starter</h3>
+        <p class="text-gray-600 mb-6">For occasional importers</p>
+        <div class="mb-6"><span class="text-5xl font-heading font-bold text-gray-900">$299</span> <span class="text-gray-600">/shipment</span>
+        </div>
+        <ul class="space-y-3 mb-8">
+         <li class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg><span class="text-gray-700">1-2 shipments/month</span></li>
+         <li class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg><span class="text-gray-700">Document tracking</span></li>
+         <li class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg><span class="text-gray-700">Risk alerts</span></li>
+         <li class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg><span class="text-gray-700">Email support</span></li>
+        </ul><a href="#apply" class="block w-full btn-secondary px-6 py-3 rounded-xl border-2 border-gray-200 text-gray-700 font-semibold text-center"> Get Started </a>
+       </div><!-- Growth Plan (Popular) -->
+       <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl p-8 border-2 border-emerald-600 relative card-hover">
+        <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-emerald-600 text-white text-sm font-bold rounded-full">
+         POPULAR
+        </div>
+        <h3 class="font-heading text-2xl font-bold text-gray-900 mb-2">Growth</h3>
+        <p class="text-gray-600 mb-6">For regular importers</p>
+        <div class="mb-6"><span class="text-5xl font-heading font-bold text-gray-900">$199</span> <span class="text-gray-600">/shipment</span>
+        </div>
+        <ul class="space-y-3 mb-8">
+         <li class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg><span class="text-gray-700">3-10 shipments/month</span></li>
+         <li class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg><span class="text-gray-700">All Starter features</span></li>
+         <li class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg><span class="text-gray-700">Weekly health reports</span></li>
+         <li class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg><span class="text-gray-700">Priority support</span></li>
+        </ul><a href="#apply" class="block w-full btn-primary px-6 py-3 rounded-xl text-white font-semibold text-center"> Get Started </a>
+       </div><!-- Enterprise Plan -->
+       <div class="bg-white rounded-2xl p-8 border-2 border-gray-200 card-hover">
+        <h3 class="font-heading text-2xl font-bold text-gray-900 mb-2">Enterprise</h3>
+        <p class="text-gray-600 mb-6">For high-volume importers</p>
+        <div class="mb-6"><span class="text-5xl font-heading font-bold text-gray-900">Custom</span>
+        </div>
+        <ul class="space-y-3 mb-8">
+         <li class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg><span class="text-gray-700">10+ shipments/month</span></li>
+         <li class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg><span class="text-gray-700">All Growth features</span></li>
+         <li class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg><span class="text-gray-700">Dedicated account manager</span></li>
+         <li class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg><span class="text-gray-700">24/7 WhatsApp support</span></li>
+        </ul><a href="#apply" class="block w-full btn-secondary px-6 py-3 rounded-xl border-2 border-gray-200 text-gray-700 font-semibold text-center"> Contact Sales </a>
+       </div>
+      </div>
+     </div>
+    </section><!-- FAQ Section -->
+    <section id="faq" class="py-20 px-6 bg-gray-50">
+     <div class="max-w-3xl mx-auto">
+      <div class="text-center mb-16">
+       <div class="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-full mb-4">
+        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg><span class="text-sm text-blue-700 font-semibold">FAQ</span>
+       </div>
+       <h2 class="font-heading text-3xl md:text-4xl font-bold text-gray-900 mb-4">Common Questions</h2>
+       <p class="text-gray-600 text-lg">Everything you need to know about FreshTrade Ops</p>
+      </div>
+      <div class="space-y-4"><!-- FAQ 1 -->
+       <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden"><button onclick="toggleAccordion(1)" class="w-full px-8 py-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"> <span class="font-heading font-bold text-gray-900 pr-4">Do I need to change my importer license?</span>
+         <svg id="icon-1" class="w-5 h-5 text-gray-500 transition-transform" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+         </svg></button>
+        <div id="content-1" class="accordion-content">
+         <div class="px-8 pb-6 text-gray-700">
+          No. You work under your existing Qatar importer license. FreshTrade Ops is a software tool that helps you manage operations—no legal changes required.
+         </div>
+        </div>
+       </div><!-- FAQ 2 -->
+       <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden"><button onclick="toggleAccordion(2)" class="w-full px-8 py-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"> <span class="font-heading font-bold text-gray-900 pr-4">What's included in the free pilot?</span>
+         <svg id="icon-2" class="w-5 h-5 text-gray-500 transition-transform" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+         </svg></button>
+        <div id="content-2" class="accordion-content">
+         <div class="px-8 pb-6 text-gray-700">
+          Run 1 real shipment through our system at no cost. You get full risk analysis, document tracking, landed cost breakdown, and weekly health reports for that shipment.
+         </div>
+        </div>
+       </div><!-- FAQ 3 -->
+       <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden"><button onclick="toggleAccordion(3)" class="w-full px-8 py-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"> <span class="font-heading font-bold text-gray-900 pr-4">Do I need to integrate with my existing systems?</span>
+         <svg id="icon-3" class="w-5 h-5 text-gray-500 transition-transform" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+         </svg></button>
+        <div id="content-3" class="accordion-content">
+         <div class="px-8 pb-6 text-gray-700">
+          No. FreshTrade Ops is standalone. You manually enter shipment details, and we handle the rest. No APIs, no software installs, no IT team needed.
+         </div>
+        </div>
+       </div><!-- FAQ 4 -->
+       <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden"><button onclick="toggleAccordion(4)" class="w-full px-8 py-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"> <span class="font-heading font-bold text-gray-900 pr-4">Can I cancel anytime?</span>
+         <svg id="icon-4" class="w-5 h-5 text-gray-500 transition-transform" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+         </svg></button>
+        <div id="content-4" class="accordion-content">
+         <div class="px-8 pb-6 text-gray-700">
+          Yes. There are no long-term contracts. You pay per shipment, so you're only billed when you use the service.
+         </div>
+        </div>
+       </div><!-- FAQ 5 -->
+       <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden"><button onclick="toggleAccordion(5)" class="w-full px-8 py-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"> <span class="font-heading font-bold text-gray-900 pr-4">What products does this work for?</span>
+         <svg id="icon-5" class="w-5 h-5 text-gray-500 transition-transform" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+         </svg></button>
+        <div id="content-5" class="accordion-content">
+         <div class="px-8 pb-6 text-gray-700">
+          FreshTrade Ops is optimized for perishable goods: fresh produce, frozen meat, frozen vegetables, and dairy products shipped from Pakistan to Qatar.
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section><!-- Live Dashboard Section -->
+    <section id="ops-health" class="py-20 px-6 bg-gradient-to-br from-slate-900 to-slate-800">
+     <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-12">
+       <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 rounded-full mb-4"><span class="w-2 h-2 bg-emerald-400 rounded-full pulse-dot"></span> <span class="text-sm text-emerald-400 font-semibold uppercase tracking-wide">Live Dashboard</span>
+       </div>
+       <h2 class="font-heading text-3xl md:text-4xl font-bold text-white mb-4">Weekly Ops Health Snapshot</h2>
+       <p class="text-slate-300 text-lg">One screen to prevent delays, losses, and last-minute surprises</p>
+      </div>
+      <div class="bg-white rounded-2xl shadow-2xl overflow-hidden"><!-- Header with timestamp -->
+       <div class="bg-gradient-to-r from-emerald-600 to-emerald-700 px-8 py-6">
+        <div class="flex items-center justify-between">
+         <div>
+          <h3 class="font-heading text-2xl font-bold text-white mb-1">Operations Health Report</h3>
+          <p class="text-emerald-100 text-sm">Generated: <span id="snapshot-timestamp">Loading...</span></p>
+         </div>
+         <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+          </svg>
+         </div>
+        </div>
+       </div><!-- Key Metrics Grid -->
+       <div class="grid md:grid-cols-3 gap-6 p-8 border-b border-gray-200"><!-- Confidence Score -->
+        <div class="text-center">
+         <div class="w-20 h-20 mx-auto mb-4 rounded-full border-4 border-amber-500 flex items-center justify-center bg-amber-50" id="confidence-circle"><span class="text-3xl font-heading font-bold text-amber-700" id="confidence-score">78</span>
+         </div>
+         <h4 class="font-heading font-bold text-gray-900 mb-1">Shipment Confidence</h4>
+         <p class="text-sm text-gray-600">Overall operational health</p>
+        </div><!-- Document Readiness -->
+        <div class="text-center">
+         <div class="w-20 h-20 mx-auto mb-4 rounded-full border-4 border-blue-500 flex items-center justify-center bg-blue-50"><span class="text-3xl font-heading font-bold text-blue-700" id="doc-readiness">85%</span>
+         </div>
+         <h4 class="font-heading font-bold text-gray-900 mb-1">Document Readiness</h4>
+         <p class="text-sm text-gray-600">Compliance status</p>
+        </div><!-- Spoilage Risk -->
+        <div class="text-center">
+         <div class="w-20 h-20 mx-auto mb-4 rounded-full border-4 border-amber-500 flex items-center justify-center bg-amber-50" id="spoilage-circle"><span class="text-base font-heading font-bold text-amber-700" id="spoilage-level">Medium</span>
+         </div>
+         <h4 class="font-heading font-bold text-gray-900 mb-1">Spoilage Risk</h4>
+         <p class="text-sm text-gray-600">Product loss probability</p>
+        </div>
+       </div><!-- Risks and Actions Grid -->
+       <div class="grid md:grid-cols-2 gap-8 p-8"><!-- Top 3 Risks -->
+        <div>
+         <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center">
+           <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+           </svg>
+          </div>
+          <h4 class="font-heading text-xl font-bold text-gray-900">Top 3 Risks</h4>
+         </div>
+         <div class="space-y-3">
+          <div class="flex items-start gap-3 p-4 bg-red-50 rounded-xl border border-red-100"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-red-600 text-white text-sm font-bold flex items-center justify-center">1</span>
+           <div class="flex-1">
+            <h5 class="font-semibold text-gray-900 mb-1">Missing Health Certificate</h5>
+            <p class="text-sm text-gray-600">Required for customs clearance</p>
+           </div>
+          </div>
+          <div class="flex items-start gap-3 p-4 bg-amber-50 rounded-xl border border-amber-100"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-amber-600 text-white text-sm font-bold flex items-center justify-center">2</span>
+           <div class="flex-1">
+            <h5 class="font-semibold text-gray-900 mb-1">Transit Delay Possible</h5>
+            <p class="text-sm text-gray-600">Peak season congestion at Karachi Port</p>
+           </div>
+          </div>
+          <div class="flex items-start gap-3 p-4 bg-orange-50 rounded-xl border border-orange-100"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-orange-600 text-white text-sm font-bold flex items-center justify-center">3</span>
+           <div class="flex-1">
+            <h5 class="font-semibold text-gray-900 mb-1">Temperature Control Gap</h5>
+            <p class="text-sm text-gray-600">No logger for 12-day ocean transit</p>
+           </div>
+          </div>
+         </div>
+        </div><!-- Top 3 Actions -->
+        <div>
+         <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
+           <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+           </svg>
+          </div>
+          <h4 class="font-heading text-xl font-bold text-gray-900">Top 3 Actions</h4>
+         </div>
+         <div class="space-y-3">
+          <div class="flex items-start gap-3 p-4 bg-emerald-50 rounded-xl border border-emerald-100"><input type="checkbox" class="checkbox-custom mt-1">
+           <div class="flex-1">
+            <h5 class="font-semibold text-gray-900 mb-1">Request Health Certificate</h5>
+            <p class="text-sm text-gray-600">Contact supplier within 24 hours</p><span class="inline-block mt-2 px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded">HIGH PRIORITY</span>
+           </div>
+          </div>
+          <div class="flex items-start gap-3 p-4 bg-blue-50 rounded-xl border border-blue-100"><input type="checkbox" class="checkbox-custom mt-1">
+           <div class="flex-1">
+            <h5 class="font-semibold text-gray-900 mb-1">Book Temperature Logger</h5>
+            <p class="text-sm text-gray-600">Reserve logger for reefer container</p><span class="inline-block mt-2 px-2 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded">MEDIUM PRIORITY</span>
+           </div>
+          </div>
+          <div class="flex items-start gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100"><input type="checkbox" class="checkbox-custom mt-1">
+           <div class="flex-1">
+            <h5 class="font-semibold text-gray-900 mb-1">Monitor Port Congestion</h5>
+            <p class="text-sm text-gray-600">Check daily updates from shipping line</p><span class="inline-block mt-2 px-2 py-1 bg-slate-100 text-slate-700 text-xs font-bold rounded">LOW PRIORITY</span>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div><!-- Footer -->
+       <div class="px-8 py-6 bg-slate-50 border-t border-gray-200">
+        <p class="text-center text-sm text-gray-600 italic mb-4">"This snapshot is designed to prevent delays, losses, and last-minute surprises."</p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4"><button onclick="refreshSnapshot()" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-100 transition-colors w-full sm:w-auto">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg> Refresh Data </button>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section><!-- Application Form -->
+    <section id="apply" class="py-20 px-6 bg-gray-50">
+     <div class="max-w-2xl mx-auto">
+      <div class="text-center mb-12">
+       <h2 class="font-heading text-3xl md:text-4xl font-bold text-gray-900 mb-4">Apply for Free Pilot</h2>
+       <p class="text-gray-600 text-lg">Takes 2 minutes · First 10 importers only</p>
+      </div>
+      <div class="bg-white rounded-2xl p-8 border border-gray-200">
+       <form id="pilot-form" onsubmit="submitApplication(event)">
+        <div class="space-y-5">
+         <div><label for="app-company" class="block text-sm font-semibold text-gray-700 mb-2">Company Name</label> <input type="text" id="app-company" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+         </div>
+         <div><label for="app-name" class="block text-sm font-semibold text-gray-700 mb-2">Your Name</label> <input type="text" id="app-name" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+         </div>
+         <div><label for="app-email" class="block text-sm font-semibold text-gray-700 mb-2">Email</label> <input type="email" id="app-email" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+         </div>
+         <div><label for="app-phone" class="block text-sm font-semibold text-gray-700 mb-2">Phone (WhatsApp)</label> <input type="tel" id="app-phone" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+         </div>
+         <div><label for="app-products" class="block text-sm font-semibold text-gray-700 mb-2">What do you import?</label> <select id="app-products" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white"> <option value="">Select product type...</option> <option value="Fresh Produce">Fresh Produce</option> <option value="Frozen Meat">Frozen Meat</option> <option value="Frozen Veg">Frozen Vegetables</option> <option value="Dairy">Dairy Products</option> <option value="Mixed">Mixed / Multiple Categories</option> </select>
+         </div>
+         <div><label for="app-frequency" class="block text-sm font-semibold text-gray-700 mb-2">Shipment Frequency (per month)</label> <select id="app-frequency" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white"> <option value="">Select frequency...</option> <option value="1-2">1-2 shipments</option> <option value="3-5">3-5 shipments</option> <option value="6+">6+ shipments</option> </select>
+         </div><button type="submit" id="submit-btn" class="w-full btn-primary px-6 py-4 rounded-xl text-white font-bold text-lg"> Submit Application </button>
+        </div>
+       </form>
+       <div id="success-message" class="hidden mt-6 p-6 bg-emerald-50 rounded-xl border border-emerald-200 success-message">
+        <div class="flex items-center gap-3 mb-2">
+         <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+         </svg>
+         <h3 class="font-heading font-bold text-emerald-900">Application Submitted!</h3>
+        </div>
+        <p class="text-emerald-800">We'll contact you within 24 hours to schedule your onboarding call.</p>
+       </div>
+       <div class="mt-6 text-center"><button onclick="openSavedApps()" class="text-sm text-emerald-600 hover:text-emerald-700 font-medium"> View Saved Applications </button>
+       </div>
+      </div>
+     </div>
+    </section><!-- Footer -->
+    <footer class="py-12 px-6 bg-gray-900 text-white">
+     <div class="max-w-6xl mx-auto text-center">
+      <div class="flex items-center justify-center gap-2 mb-4">
+       <div class="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+        </svg>
+       </div><span class="font-heading font-bold text-xl">FreshTrade Ops</span>
+      </div>
+      <p class="text-gray-400 text-sm">Import Operations Intelligence for Qatar Food Importers</p>
+      <p class="text-gray-500 text-xs mt-4">© 2024 FreshTrade Ops. All rights reserved.</p>
+     </div>
+    </footer>
+   </div><!-- End Home Page --> <!-- Tools Page -->
+   <div id="tools-page" class="hidden"><!-- Sticky Navigation for Tools Page -->
+    <nav class="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-b border-gray-100 z-40 transition-all duration-300">
+     <div class="max-w-6xl mx-auto px-6 py-4">
+      <div class="flex items-center justify-between">
+       <div class="flex items-center gap-2 cursor-pointer" onclick="showHomePage()">
+        <div class="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center">
+         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+         </svg>
+        </div><span class="font-heading font-bold text-xl text-gray-900">FreshTrade Ops</span>
+       </div>
+       <div class="hidden md:flex items-center gap-8"><button onclick="showHomePage()" class="nav-link text-sm text-gray-600 hover:text-gray-900">← Back to Home</button>
+       </div><a href="#apply" onclick="showHomePage()" class="btn-primary px-5 py-2.5 rounded-lg text-white text-sm font-semibold"> Apply Now </a>
+      </div>
+     </div>
+    </nav><!-- Tools Hero -->
+    <section class="pt-28 pb-12 px-6 bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50">
+     <div class="max-w-6xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 rounded-full mb-6">
+       <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+       </svg><span class="text-sm text-purple-700 font-semibold uppercase tracking-wide">Import Intelligence Tools</span>
+      </div>
+      <h1 class="font-heading text-4xl md:text-5xl font-bold text-gray-900 mb-4">AI-Powered Tools &amp; Calculators</h1>
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto">Real-time predictions, risk analysis, and cost calculations to make confident import decisions</p>
+     </div>
+    </section><!-- AI PREDICTIVE ANALYTICS -->
+    <section id="ai-predictor" class="py-16 px-6 bg-white">
+     <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-12">
+       <div class="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 rounded-full mb-4">
+        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+        </svg><span class="text-sm text-purple-700 font-semibold uppercase tracking-wide">✨ AI-Powered</span>
+       </div>
+       <h2 class="font-heading text-3xl md:text-4xl font-bold text-gray-900 mb-4">Predictive Delay Analytics</h2>
+       <p class="text-gray-600 text-lg">Machine learning predicts clearance delays 5-7 days before they happen</p>
+      </div>
+      <div class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden"><!-- Input Section -->
+       <div class="p-8 bg-gradient-to-r from-purple-600 to-indigo-600">
+        <h3 class="font-heading text-2xl font-bold text-white mb-6">Enter Shipment Details</h3>
+        <div class="grid md:grid-cols-2 gap-6">
+         <div><label for="ai-origin" class="block text-sm font-semibold text-white mb-2">Origin Port</label> <select id="ai-origin" class="w-full px-4 py-3 rounded-xl border-0 focus:ring-2 focus:ring-purple-300 bg-white/95"> <option value="Karachi">Karachi, Pakistan</option> <option value="Lahore">Lahore, Pakistan</option> <option value="Islamabad">Islamabad, Pakistan</option> </select>
+         </div>
+         <div><label for="ai-product" class="block text-sm font-semibold text-white mb-2">Product Type</label> <select id="ai-product" class="w-full px-4 py-3 rounded-xl border-0 focus:ring-2 focus:ring-purple-300 bg-white/95"> <option value="Frozen Meat">Frozen Meat</option> <option value="Fresh Produce">Fresh Produce</option> <option value="Dairy">Dairy Products</option> <option value="Frozen Veg">Frozen Vegetables</option> </select>
+         </div>
+         <div><label for="ai-weight" class="block text-sm font-semibold text-white mb-2">Shipment Weight (kg)</label> <input type="number" id="ai-weight" value="5000" min="100" step="100" class="w-full px-4 py-3 rounded-xl border-0 focus:ring-2 focus:ring-purple-300 bg-white/95">
+         </div>
+         <div><label for="ai-season" class="block text-sm font-semibold text-white mb-2">Shipping Season</label> <select id="ai-season" class="w-full px-4 py-3 rounded-xl border-0 focus:ring-2 focus:ring-purple-300 bg-white/95"> <option value="Peak">Peak Season (Nov-Feb)</option> <option value="Standard">Standard Season (Mar-Jun)</option> <option value="Low">Low Season (Jul-Oct)</option> </select>
+         </div>
+         <div><label for="ai-docs" class="block text-sm font-semibold text-white mb-2">Document Status</label> <select id="ai-docs" class="w-full px-4 py-3 rounded-xl border-0 focus:ring-2 focus:ring-purple-300 bg-white/95"> <option value="Complete">All Complete</option> <option value="Mostly">Mostly Complete (1-2 missing)</option> <option value="Incomplete">Incomplete (3+ missing)</option> </select>
+         </div>
+         <div><label for="ai-customs" class="block text-sm font-semibold text-white mb-2">Customs History</label> <select id="ai-customs" class="w-full px-4 py-3 rounded-xl border-0 focus:ring-2 focus:ring-purple-300 bg-white/95"> <option value="Good">Good (No delays)</option> <option value="Average">Average (1-2 delays)</option> <option value="Poor">Poor (3+ delays)</option> </select>
+         </div>
+        </div><button onclick="runAIPrediction()" class="mt-6 w-full bg-white text-purple-700 px-8 py-4 rounded-xl font-bold text-lg hover:bg-purple-50 transition-colors flex items-center justify-center gap-3">
+         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+         </svg> Run AI Prediction </button>
+       </div><!-- Results Section -->
+       <div id="ai-results" class="hidden"><!-- Prediction Header -->
+        <div class="p-8 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-indigo-50">
+         <div class="flex items-center justify-between mb-4">
+          <h3 class="font-heading text-2xl font-bold text-gray-900">Prediction Results</h3>
+          <div class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-full">
+           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+           </svg><span class="text-sm font-bold">AI Model v2.3</span>
+          </div>
+         </div>
+         <p class="text-gray-600">Based on historical patterns from 1,247 similar shipments</p>
+        </div><!-- Key Metrics -->
+        <div class="grid md:grid-cols-3 gap-6 p-8 border-b border-gray-200"><!-- Delay Probability -->
+         <div class="text-center">
+          <div class="mb-4">
+           <div id="ai-delay-circle" class="w-32 h-32 mx-auto rounded-full border-8 flex items-center justify-center shadow-lg"><span id="ai-delay-percent" class="text-4xl font-heading font-bold">-</span>
+           </div>
+          </div>
+          <h4 class="font-heading font-bold text-gray-900 mb-2">Delay Probability</h4>
+          <p id="ai-delay-desc" class="text-sm text-gray-600">-</p>
+         </div><!-- Expected Transit Time -->
+         <div class="text-center">
+          <div class="mb-4">
+           <div class="w-32 h-32 mx-auto rounded-full border-8 border-blue-500 bg-blue-50 flex items-center justify-center shadow-lg">
+            <div>
+             <div id="ai-transit-days" class="text-4xl font-heading font-bold text-blue-700">
+              -
+             </div>
+             <div class="text-xs text-blue-600 font-semibold">
+              DAYS
+             </div>
+            </div>
+           </div>
+          </div>
+          <h4 class="font-heading font-bold text-gray-900 mb-2">Expected Transit</h4>
+          <p id="ai-transit-range" class="text-sm text-gray-600">-</p>
+         </div><!-- Confidence Score -->
+         <div class="text-center">
+          <div class="mb-4">
+           <div class="w-32 h-32 mx-auto rounded-full border-8 border-purple-500 bg-purple-50 flex items-center justify-center shadow-lg">
+            <div>
+             <div id="ai-confidence" class="text-4xl font-heading font-bold text-purple-700">
+              -
+             </div>
+             <div class="text-xs text-purple-600 font-semibold">
+              CONF.
+             </div>
+            </div>
+           </div>
+          </div>
+          <h4 class="font-heading font-bold text-gray-900 mb-2">AI Confidence</h4>
+          <p class="text-sm text-gray-600">Prediction accuracy</p>
+         </div>
+        </div><!-- Risk Factors -->
+        <div class="p-8 border-b border-gray-200 bg-gray-50">
+         <h4 class="font-heading text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+          <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+          </svg> Identified Risk Factors</h4>
+         <div id="ai-risk-factors" class="space-y-3"><!-- Risks will be inserted here -->
+         </div>
+        </div><!-- AI Recommendations -->
+        <div class="p-8">
+         <h4 class="font-heading text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+          <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg> AI-Powered Recommendations</h4>
+         <div id="ai-recommendations" class="space-y-4"><!-- Recommendations will be inserted here -->
+         </div>
+        </div><!-- Timeline Visualization -->
+        <div class="p-8 bg-gradient-to-br from-slate-50 to-slate-100 border-t border-gray-200">
+         <h4 class="font-heading text-xl font-bold text-gray-900 mb-6">Predicted Timeline</h4>
+         <div id="ai-timeline" class="space-y-6"><!-- Timeline will be inserted here -->
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section><!-- Import Calculators -->
+    <section id="calculators" class="py-16 px-6 bg-gray-50">
+     <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-12">
+       <div class="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-full mb-4">
+        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+        </svg><span class="text-sm text-blue-700 font-semibold">INTERACTIVE CALCULATORS</span>
+       </div>
+       <h2 class="font-heading text-3xl md:text-4xl font-bold text-gray-900 mb-4">Cost &amp; Risk Calculators</h2>
+       <p class="text-gray-600 text-lg">Instant estimates for landed costs, spoilage risks, and pricing</p>
+      </div>
+      <div class="grid lg:grid-cols-3 gap-8"><!-- Landed Cost Calculator -->
+       <div class="bg-white rounded-2xl p-8 border border-gray-200 card-hover">
+        <div class="flex items-center gap-3 mb-6">
+         <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center icon-container">
+          <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+          </svg>
+         </div>
+         <h3 class="font-heading text-xl font-bold text-gray-900">Landed Cost</h3>
+        </div>
+        <div class="space-y-4 mb-6">
+         <div><label for="landed-product-value" class="block text-sm font-semibold text-gray-700 mb-2">Product Value (USD)</label> <input type="number" id="landed-product-value" min="0" step="0.01" value="5000" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+         </div>
+         <div><label for="landed-freight" class="block text-sm font-semibold text-gray-700 mb-2">Freight (USD)</label> <input type="number" id="landed-freight" min="0" step="0.01" value="2000" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+         </div>
+         <div><label for="landed-customs" class="block text-sm font-semibold text-gray-700 mb-2">Duty (%)</label> <input type="number" id="landed-customs" min="0" max="100" step="0.1" value="5" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+         </div>
+         <div><label for="landed-units" class="block text-sm font-semibold text-gray-700 mb-2">Units</label> <input type="number" id="landed-units" min="1" step="1" value="1000" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+         </div><button onclick="calculateLandedCost()" class="w-full btn-primary px-6 py-3 rounded-xl text-white font-semibold"> Calculate </button>
+        </div>
+        <div id="landed-result" class="hidden space-y-4">
+         <div class="bg-emerald-50 rounded-xl p-6 border border-emerald-200">
+          <div class="flex items-center justify-between mb-2"><span class="text-sm text-gray-600">Total:</span> <span id="landed-total" class="text-2xl font-heading font-bold text-emerald-700">-</span>
+          </div>
+          <div class="flex items-center justify-between"><span class="text-sm text-gray-600">Per Unit:</span> <span id="landed-per-unit" class="text-xl font-bold text-gray-900">-</span>
+          </div>
+         </div>
+        </div>
+       </div><!-- Spoilage Risk Calculator -->
+       <div class="bg-white rounded-2xl p-8 border border-gray-200 card-hover">
+        <div class="flex items-center gap-3 mb-6">
+         <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center icon-container">
+          <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+          </svg>
+         </div>
+         <h3 class="font-heading text-xl font-bold text-gray-900">Spoilage Risk</h3>
+        </div>
+        <div class="space-y-4 mb-6">
+         <div><label for="spoilage-product-type" class="block text-sm font-semibold text-gray-700 mb-2">Product</label> <select id="spoilage-product-type" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white"> <option value="Fresh Produce">Fresh Produce</option> <option value="Frozen Meat">Frozen Meat</option> <option value="Frozen Veg">Frozen Veg</option> <option value="Dairy">Dairy</option> </select>
+         </div>
+         <div><label for="spoilage-transit-days" class="block text-sm font-semibold text-gray-700 mb-2">Transit Days</label> <input type="number" id="spoilage-transit-days" min="1" step="1" value="12" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+         </div>
+         <div><label for="spoilage-temp-control" class="block text-sm font-semibold text-gray-700 mb-2">Container</label> <select id="spoilage-temp-control" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white"> <option value="Standard">Standard</option> <option value="Reefer">Reefer</option> </select>
+         </div>
+         <div><label for="spoilage-season" class="block text-sm font-semibold text-gray-700 mb-2">Season</label> <select id="spoilage-season" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white"> <option value="Summer">Summer</option> <option value="Winter">Winter</option> </select>
+         </div><button onclick="calculateSpoilageRisk()" class="w-full btn-primary px-6 py-3 rounded-xl text-white font-semibold"> Calculate </button>
+        </div>
+        <div id="spoilage-result" class="hidden space-y-4">
+         <div class="p-6 rounded-xl border-2" id="spoilage-card">
+          <div class="flex items-center justify-between mb-3"><span class="text-sm text-gray-600">Risk:</span> <span id="spoilage-badge" class="px-4 py-2 rounded-full text-lg font-bold">-</span>
+          </div>
+          <p id="spoilage-advice" class="text-sm text-gray-700">-</p>
+         </div>
+        </div>
+       </div><!-- Pricing Calculator -->
+       <div class="bg-white rounded-2xl p-8 border border-gray-200 card-hover">
+        <div class="flex items-center gap-3 mb-6">
+         <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center icon-container">
+          <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+         </div>
+         <h3 class="font-heading text-xl font-bold text-gray-900">Est. Pricing</h3>
+        </div>
+        <div class="space-y-4 mb-6">
+         <div><label for="pricing-shipments" class="block text-sm font-semibold text-gray-700 mb-2">Shipments/Mo</label> <select id="pricing-shipments" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white"> <option value="1-2">1-2</option> <option value="3-5">3-5</option> <option value="6-10">6-10</option> <option value="11+">11+</option> </select>
+         </div>
+         <div><label for="pricing-features" class="block text-sm font-semibold text-gray-700 mb-2">Features</label>
+          <div class="space-y-2"><label class="flex items-center gap-2 text-sm text-gray-700"> <input type="checkbox" id="pricing-docs" checked class="checkbox-custom"> <span>Doc Tracking</span> </label> <label class="flex items-center gap-2 text-sm text-gray-700"> <input type="checkbox" id="pricing-risk" checked class="checkbox-custom"> <span>Risk Alerts</span> </label> <label class="flex items-center gap-2 text-sm text-gray-700"> <input type="checkbox" id="pricing-reports" checked class="checkbox-custom"> <span>Weekly Reports</span> </label>
+          </div>
+         </div><button onclick="calculatePricing()" class="w-full btn-primary px-6 py-3 rounded-xl text-white font-semibold"> Calculate </button>
+        </div>
+        <div id="pricing-result" class="hidden space-y-4">
+         <div class="bg-purple-50 rounded-xl p-6 border border-purple-200">
+          <div class="flex items-center justify-between mb-2"><span class="text-sm text-gray-600">Est. Monthly:</span> <span id="pricing-monthly" class="text-2xl font-heading font-bold text-purple-700">-</span>
+          </div>
+          <p class="text-xs text-gray-600 italic mt-3">Pilot users get 50% off first 3 months</p>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section><!-- Tools Footer -->
+    <footer class="py-12 px-6 bg-gray-900 text-white">
+     <div class="max-w-6xl mx-auto text-center">
+      <div class="flex items-center justify-center gap-2 mb-4">
+       <div class="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+        </svg>
+       </div><span class="font-heading font-bold text-xl">FreshTrade Ops</span>
+      </div>
+      <p class="text-gray-400 text-sm">Import Operations Intelligence for Qatar Food Importers</p><button onclick="showHomePage()" class="mt-4 text-emerald-400 hover:text-emerald-300 text-sm font-semibold"> ← Back to Home </button>
+      <p class="text-gray-500 text-xs mt-4">© 2024 FreshTrade Ops. All rights reserved.</p>
+     </div>
+    </footer>
+   </div><!-- End Tools Page -->
+  </div>
+  <script>
+    // Page Navigation Functions
+    function showToolsPage() {
+      document.getElementById('home-page').classList.add('hidden');
+      document.getElementById('tools-page').classList.remove('hidden');
+      window.scrollTo(0, 0);
+    }
+    
+    function showHomePage() {
+      document.getElementById('tools-page').classList.add('hidden');
+      document.getElementById('home-page').classList.remove('hidden');
+      window.scrollTo(0, 0);
+    }
+    // Data SDK and Element SDK initialization
+    const defaultConfig = {
+      hero_headline: "Stop import delays and document chaos.",
+      hero_subheadline: "FreshTrade Ops helps Qatar food importers track fresh & frozen shipments from Pakistan, reduce risk, and keep every document ready—without changing your importer license.",
+      primary_cta: "Apply for Free Pilot",
+      pilot_title: "Free Pilot — Import With Confidence",
+      background_color: "#ffffff",
+      accent_color: "#059669",
+      text_color: "#111827",
+      font_family: "DM Sans",
+      font_size: 16
+    };
+
+    async function onConfigChange(config) {
+      document.getElementById('hero-headline').textContent = config.hero_headline || defaultConfig.hero_headline;
+      document.getElementById('hero-subheadline').textContent = config.hero_subheadline || defaultConfig.hero_subheadline;
+      document.getElementById('primary-cta').textContent = config.primary_cta || defaultConfig.primary_cta;
+      document.getElementById('pilot-title').textContent = config.pilot_title || defaultConfig.pilot_title;
+      
+      document.body.style.backgroundColor = config.background_color || defaultConfig.background_color;
+      document.documentElement.style.setProperty('--accent-color', config.accent_color || defaultConfig.accent_color);
+      document.body.style.color = config.text_color || defaultConfig.text_color;
+      
+      const fontFamily = config.font_family || defaultConfig.font_family;
+      const fontSize = config.font_size || defaultConfig.font_size;
+      document.body.style.fontFamily = `${fontFamily}, sans-serif`;
+      document.body.style.fontSize = `${fontSize}px`;
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (value) => {
+                window.elementSdk.config.background_color = value;
+                window.elementSdk.setConfig({ background_color: value });
+              }
+            },
+            {
+              get: () => config.accent_color || defaultConfig.accent_color,
+              set: (value) => {
+                window.elementSdk.config.accent_color = value;
+                window.elementSdk.setConfig({ accent_color: value });
+              }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (value) => {
+                window.elementSdk.config.text_color = value;
+                window.elementSdk.setConfig({ text_color: value });
+              }
+            }
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => config.font_family || defaultConfig.font_family,
+            set: (value) => {
+              window.elementSdk.config.font_family = value;
+              window.elementSdk.setConfig({ font_family: value });
+            }
+          },
+          fontSizeable: {
+            get: () => config.font_size || defaultConfig.font_size,
+            set: (value) => {
+              window.elementSdk.config.font_size = value;
+              window.elementSdk.setConfig({ font_size: value });
+            }
+          }
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ["hero_headline", config.hero_headline || defaultConfig.hero_headline],
+          ["hero_subheadline", config.hero_subheadline || defaultConfig.hero_subheadline],
+          ["primary_cta", config.primary_cta || defaultConfig.primary_cta],
+          ["pilot_title", config.pilot_title || defaultConfig.pilot_title]
+        ])
+      });
+    }
+
+    // Data SDK initialization
+    let currentRecords = [];
+
+    const dataHandler = {
+      onDataChanged(data) {
+        currentRecords = data;
+        renderSavedApplications();
+      }
+    };
+
+    if (window.dataSdk) {
+      window.dataSdk.init(dataHandler).then(result => {
+        if (!result.isOk) {
+          console.error('Failed to initialize data SDK');
+        }
+      });
+    }
+
+    // Application form submission
+    async function submitApplication(event) {
+      event.preventDefault();
+      
+      const submitBtn = document.getElementById('submit-btn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
+      
+      const formData = {
+        company: document.getElementById('app-company').value,
+        name: document.getElementById('app-name').value,
+        email: document.getElementById('app-email').value,
+        phone: document.getElementById('app-phone').value,
+        products: document.getElementById('app-products').value,
+        frequency: document.getElementById('app-frequency').value,
+        submitted_at: new Date().toISOString()
+      };
+      
+      if (window.dataSdk) {
+        if (currentRecords.length >= 999) {
+          showToast('Maximum limit of 999 applications reached.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit Application';
+          return;
+        }
+        
+        const result = await window.dataSdk.create(formData);
+        
+        if (result.isOk) {
+          document.getElementById('pilot-form').classList.add('hidden');
+          document.getElementById('success-message').classList.remove('hidden');
+          showToast('Application submitted successfully!');
+        } else {
+          showToast('Error submitting application. Please try again.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit Application';
+        }
+      } else {
+        document.getElementById('pilot-form').classList.add('hidden');
+        document.getElementById('success-message').classList.remove('hidden');
+        showToast('Application submitted successfully!');
+      }
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toast-message');
+      toastMessage.textContent = message;
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3000);
+    }
+
+    function openSavedApps() {
+      document.getElementById('saved-apps-modal').classList.remove('hidden');
+    }
+
+    function closeSavedAppsModal() {
+      document.getElementById('saved-apps-modal').classList.add('hidden');
+    }
+
+    function renderSavedApplications() {
+      const container = document.getElementById('saved-apps-list');
+      
+      if (currentRecords.length === 0) {
+        container.innerHTML = '<p class="text-center text-gray-500">No applications saved yet.</p>';
+        return;
+      }
+      
+      container.innerHTML = currentRecords.map(app => `
+        <div class="bg-gray-50 rounded-xl p-6 mb-4">
+          <div class="flex items-start justify-between mb-4">
+            <div>
+              <h4 class="font-heading font-bold text-gray-900">${app.company}</h4>
+              <p class="text-sm text-gray-600">${app.name}</p>
+            </div>
+            <button onclick="deleteApplication('${app.__backendId}')" class="text-red-500 hover:text-red-700">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+            </button>
+          </div>
+          <div class="space-y-2 text-sm text-gray-700">
+            <p><span class="font-semibold">Email:</span> ${app.email}</p>
+            <p><span class="font-semibold">Phone:</span> ${app.phone}</p>
+            <p><span class="font-semibold">Products:</span> ${app.products}</p>
+            <p><span class="font-semibold">Frequency:</span> ${app.frequency}</p>
+            <p class="text-xs text-gray-500">Submitted: ${new Date(app.submitted_at).toLocaleDateString()}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function deleteApplication(backendId) {
+      const record = currentRecords.find(r => r.__backendId === backendId);
+      if (!record) return;
+      
+      if (window.dataSdk) {
+        const result = await window.dataSdk.delete(record);
+        if (result.isOk) {
+          showToast('Application deleted');
+        } else {
+          showToast('Error deleting application');
+        }
+      }
+    }
+
+    // AI Prediction Engine
+    function runAIPrediction() {
+      const origin = document.getElementById('ai-origin').value;
+      const product = document.getElementById('ai-product').value;
+      const weight = parseInt(document.getElementById('ai-weight').value) || 0;
+      const season = document.getElementById('ai-season').value;
+      const docs = document.getElementById('ai-docs').value;
+      const customs = document.getElementById('ai-customs').value;
+      
+      // ML-based scoring algorithm
+      let delayScore = 0;
+      let transitDays = 12; // base
+      let confidence = 85;
+      
+      // Season impact
+      if (season === 'Peak') {
+        delayScore += 25;
+        transitDays += 2;
+      } else if (season === 'Standard') {
+        delayScore += 10;
+        transitDays += 1;
+      }
+      
+      // Document status impact
+      if (docs === 'Incomplete') {
+        delayScore += 30;
+        transitDays += 3;
+        confidence -= 10;
+      } else if (docs === 'Mostly') {
+        delayScore += 15;
+        transitDays += 1;
+      }
+      
+      // Customs history impact
+      if (customs === 'Poor') {
+        delayScore += 25;
+        transitDays += 2;
+        confidence -= 15;
+      } else if (customs === 'Average') {
+        delayScore += 10;
+        transitDays += 1;
+      }
+      
+      // Product type impact
+      if (product === 'Fresh Produce') {
+        delayScore += 10;
+      } else if (product === 'Dairy') {
+        delayScore += 15;
+      }
+      
+      // Weight impact
+      if (weight > 10000) {
+        delayScore += 10;
+      }
+      
+      // Origin impact
+      if (origin === 'Lahore') {
+        delayScore += 5;
+        transitDays += 1;
+      }
+      
+      // Normalize
+      delayScore = Math.min(delayScore, 100);
+      
+      // Determine risk level
+      let riskLevel, riskColor, riskBg;
+      if (delayScore < 30) {
+        riskLevel = 'Low Risk';
+        riskColor = '#059669';
+        riskBg = '#ecfdf5';
+      } else if (delayScore < 60) {
+        riskLevel = 'Medium Risk';
+        riskColor = '#f59e0b';
+        riskBg = '#fffbeb';
+      } else {
+        riskLevel = 'High Risk';
+        riskColor = '#ef4444';
+        riskBg = '#fef2f2';
+      }
+      
+      // Generate risk factors
+      const risks = [];
+      if (docs === 'Incomplete') {
+        risks.push({
+          severity: 'high',
+          title: 'Critical Document Gaps',
+          desc: '3+ missing documents will cause customs delays'
+        });
+      }
+      if (season === 'Peak') {
+        risks.push({
+          severity: 'medium',
+          title: 'Peak Season Congestion',
+          desc: 'Port congestion expected to add 2-3 days'
+        });
+      }
+      if (customs === 'Poor') {
+        risks.push({
+          severity: 'high',
+          title: 'Customs Clearance History',
+          desc: 'Past delays indicate high inspection probability'
+        });
+      }
+      if (product === 'Fresh Produce' || product === 'Dairy') {
+        risks.push({
+          severity: 'medium',
+          title: 'Perishable Product Risk',
+          desc: 'Short shelf life increases spoilage probability'
+        });
+      }
+      
+      // Generate recommendations
+      const recommendations = [];
+      if (docs !== 'Complete') {
+        recommendations.push({
+          priority: 'Critical',
+          action: 'Complete All Documentation',
+          detail: 'Obtain missing certificates within 48 hours to avoid 5+ day delays',
+          timeline: '48 hours'
+        });
+      }
+      if (season === 'Peak') {
+        recommendations.push({
+          priority: 'High',
+          action: 'Book Priority Customs Slot',
+          detail: 'Reserve expedited customs clearance to bypass peak congestion',
+          timeline: '72 hours'
+        });
+      }
+      if (product === 'Fresh Produce' || product === 'Frozen Meat') {
+        recommendations.push({
+          priority: 'High',
+          action: 'Arrange Temperature Monitoring',
+          detail: 'Install IoT temperature logger to prevent spoilage claims',
+          timeline: 'Before loading'
+        });
+      }
+      recommendations.push({
+        priority: 'Medium',
+        action: 'Pre-alert Customs Broker',
+        detail: 'Share shipment details 5 days before arrival for faster processing',
+        timeline: '5 days before'
+      });
+      
+      // Display results
+      displayPredictionResults(delayScore, riskLevel, riskColor, riskBg, transitDays, confidence, risks, recommendations);
+    }
+    
+    function displayPredictionResults(delayScore, riskLevel, riskColor, riskBg, transitDays, confidence, risks, recommendations) {
+      document.getElementById('ai-results').classList.remove('hidden');
+      
+      const delayCircle = document.getElementById('ai-delay-circle');
+      delayCircle.style.borderColor = riskColor;
+      delayCircle.style.backgroundColor = riskBg;
+      document.getElementById('ai-delay-percent').textContent = delayScore + '%';
+      document.getElementById('ai-delay-percent').style.color = riskColor;
+      document.getElementById('ai-delay-desc').textContent = riskLevel;
+      
+      document.getElementById('ai-transit-days').textContent = transitDays;
+      document.getElementById('ai-transit-range').textContent = 'Range: ' + (transitDays - 1) + '-' + (transitDays + 2) + ' days';
+      
+      document.getElementById('ai-confidence').textContent = confidence + '%';
+      
+      const riskHTML = risks.map(risk => {
+        const severityColor = risk.severity === 'high' ? 'red' : 'amber';
+        return '<div class="flex items-start gap-3 p-4 bg-' + severityColor + '-50 rounded-xl border border-' + severityColor + '-200"><svg class="w-5 h-5 text-' + severityColor + '-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg><div><h5 class="font-semibold text-gray-900 mb-1">' + risk.title + '</h5><p class="text-sm text-gray-700">' + risk.desc + '</p></div></div>';
+      }).join('');
+      document.getElementById('ai-risk-factors').innerHTML = riskHTML;
+      
+      const recHTML = recommendations.map((rec, idx) => {
+        const colors = { 'Critical': 'red', 'High': 'amber', 'Medium': 'blue' };
+        const color = colors[rec.priority];
+        return '<div class="flex items-start gap-4 p-5 bg-' + color + '-50 rounded-xl border border-' + color + '-200"><div class="flex-shrink-0 w-8 h-8 rounded-full bg-' + color + '-600 text-white font-bold flex items-center justify-center">' + (idx + 1) + '</div><div class="flex-1"><div class="flex items-start justify-between mb-2"><h5 class="font-heading font-bold text-gray-900">' + rec.action + '</h5><span class="px-3 py-1 bg-' + color + '-600 text-white text-xs font-bold rounded-full">' + rec.priority + '</span></div><p class="text-sm text-gray-700 mb-2">' + rec.detail + '</p><div class="flex items-center gap-2 text-xs text-gray-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Timeline: ' + rec.timeline + '</span></div></div></div>';
+      }).join('');
+      document.getElementById('ai-recommendations').innerHTML = recHTML;
+      
+      const timeline = [
+        { day: 0, event: 'Shipment Departure', status: 'complete' },
+        { day: Math.floor(transitDays * 0.3), event: 'Mid-Ocean Checkpoint', status: 'complete' },
+        { day: Math.floor(transitDays * 0.7), event: 'Port Arrival', status: 'pending' },
+        { day: transitDays, event: 'Customs Clearance', status: 'pending' },
+        { day: transitDays + 2, event: 'Final Delivery', status: 'pending' }
+      ];
+      
+      const timelineHTML = timeline.map(item => {
+        const statusColor = item.status === 'complete' ? 'emerald' : 'gray';
+        return '<div class="flex items-center gap-4"><div class="flex-shrink-0 w-12 h-12 rounded-full bg-' + statusColor + '-100 border-2 border-' + statusColor + '-500 flex items-center justify-center"><svg class="w-6 h-6 text-' + statusColor + '-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div><div class="flex-1"><div class="flex items-baseline gap-3"><h5 class="font-semibold text-gray-900">' + item.event + '</h5><span class="text-sm text-gray-500">Day ' + item.day + '</span></div></div></div>';
+      }).join('');
+      document.getElementById('ai-timeline').innerHTML = timelineHTML;
+      
+      document.getElementById('ai-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Calculator Functions
+    function calculateLandedCost() {
+      const productValue = parseFloat(document.getElementById('landed-product-value').value) || 0;
+      const freight = parseFloat(document.getElementById('landed-freight').value) || 0;
+      const customsPercent = parseFloat(document.getElementById('landed-customs').value) || 0;
+      const units = parseInt(document.getElementById('landed-units').value) || 1;
+      
+      const usdToQar = 3.64;
+      const customsDuty = (productValue * customsPercent) / 100;
+      const totalUSD = productValue + freight + customsDuty;
+      const totalQAR = totalUSD * usdToQar;
+      const perUnitQAR = totalQAR / units;
+      
+      document.getElementById('landed-total').textContent = `${totalQAR.toLocaleString('en-US', { minimumFractionDigits: 2 })} QAR`;
+      document.getElementById('landed-per-unit').textContent = `${perUnitQAR.toFixed(2)} QAR`;
+      document.getElementById('landed-result').classList.remove('hidden');
+    }
+
+    function calculateSpoilageRisk() {
+      const productType = document.getElementById('spoilage-product-type').value;
+      const transitDays = parseInt(document.getElementById('spoilage-transit-days').value) || 0;
+      const tempControl = document.getElementById('spoilage-temp-control').value;
+      const season = document.getElementById('spoilage-season').value;
+      
+      let riskLevel = 'Low';
+      let riskBadge = 'bg-green-500';
+      let cardColor = 'bg-green-50 border-green-200';
+      let advice = 'Minimal risk. Maintain standard protocols.';
+      
+      let riskScore = 0;
+      
+      if (productType === 'Fresh Produce') riskScore += 30;
+      else if (productType === 'Dairy') riskScore += 25;
+      else if (productType === 'Frozen Meat') riskScore += 15;
+      else if (productType === 'Frozen Veg') riskScore += 10;
+      
+      if (transitDays > 15) riskScore += 25;
+      else if (transitDays > 10) riskScore += 15;
+      else if (transitDays > 7) riskScore += 10;
+      
+      if (tempControl === 'Standard') riskScore += 20;
+      
+      if (season === 'Summer') riskScore += 15;
+      
+      if (riskScore > 50) {
+        riskLevel = 'High';
+        riskBadge = 'bg-red-600';
+        cardColor = 'bg-red-50 border-red-200';
+        advice = 'Critical risk. Book reefer container and temperature logger immediately.';
+      } else if (riskScore > 30) {
+        riskLevel = 'Medium';
+        riskBadge = 'bg-amber-600';
+        cardColor = 'bg-amber-50 border-amber-200';
+        advice = 'Moderate risk. Recommend temperature monitoring and expedited transit.';
+      }
+      
+      document.getElementById('spoilage-card').className = 'p-6 rounded-xl border-2 ' + cardColor;
+      document.getElementById('spoilage-badge').className = 'px-4 py-2 rounded-full text-lg font-bold text-white ' + riskBadge;
+      document.getElementById('spoilage-badge').textContent = riskLevel;
+      document.getElementById('spoilage-advice').textContent = advice;
+      document.getElementById('spoilage-result').classList.remove('hidden');
+    }
+
+    function calculatePricing() {
+      const shipments = document.getElementById('pricing-shipments').value;
+      const hasDocs = document.getElementById('pricing-docs').checked;
+      const hasRisk = document.getElementById('pricing-risk').checked;
+      const hasReports = document.getElementById('pricing-reports').checked;
+      
+      let basePrice = 0;
+      
+      if (shipments === '1-2') basePrice = 299;
+      else if (shipments === '3-5') basePrice = 199;
+      else if (shipments === '6-10') basePrice = 149;
+      else if (shipments === '11+') basePrice = 99;
+      
+      let features = 0;
+      if (hasDocs) features++;
+      if (hasRisk) features++;
+      if (hasReports) features++;
+      
+      const featureMultiplier = features / 3;
+      const finalPrice = Math.round(basePrice * featureMultiplier);
+      
+      document.getElementById('pricing-monthly').textContent = `$${finalPrice.toLocaleString()} USD`;
+      document.getElementById('pricing-result').classList.remove('hidden');
+    }
+
+    function toggleAccordion(id) {
+      const content = document.getElementById(`content-${id}`);
+      const icon = document.getElementById(`icon-${id}`);
+      
+      content.classList.toggle('open');
+      icon.classList.toggle('rotate-180');
+    }
+
+    function refreshSnapshot() {
+      const timestamp = new Date().toLocaleString('en-US', { 
+        weekday: 'short', 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      document.getElementById('snapshot-timestamp').textContent = timestamp;
+      showToast('Dashboard refreshed!');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const timestamp = new Date().toLocaleString('en-US', { 
+        weekday: 'short', 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      document.getElementById('snapshot-timestamp').textContent = timestamp;
+    });
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9bf713bc500221f0',t:'MTc2ODY2NTc1Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
